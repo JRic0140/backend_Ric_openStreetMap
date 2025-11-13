@@ -5,24 +5,25 @@ use controller::{
 };
 
 use axum::{
-    Router, routing::{delete as DELETE, get as GET, post as POST, put as PUT},
-
+    Router
 };
 use sqlx::SqlitePool;
 use tokio::net::{
     TcpListener
 };
 
-use crate::repository::routes_repo::RutaRepository;
+use crate::repository::{
+    RutaRepository
+};
 
 #[tokio::main]
 async fn main() {
     // Conectar a la base de datos SQLite
-    let database_url = "sqlite:./rutas.db"; //  usa una ruta absoluta
+    let database_url = "sqlite:./my_db.db"; //  usa una ruta absoluta
     // sqlite conn
     let pool = SqlitePool::connect(database_url).await.unwrap();
     // Crear repositorio
-    let repo = RutaRepository::new(pool);
+    let repo: RutaRepository = RutaRepository::new(pool);
     // Crear tabla si no existe
     let _ = repo.crear_tabla().await;
     // build our application with a single route
@@ -30,7 +31,7 @@ async fn main() {
 
     // run our app with hyper, listening globally on port 3000
     axum::serve(
-        TcpListener::bind("0.0.0.0:3000").await.unwrap(),
+        TcpListener::bind("0.0.0.0:3300").await.unwrap(),
          app).await.unwrap();
 
 }

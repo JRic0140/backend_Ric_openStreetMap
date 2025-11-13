@@ -1,5 +1,11 @@
-pub mod routes_repo;
-
+mod routes_repo;
+mod user_repo;
 pub use routes_repo::{
-    Ruta
+    Ruta,
+    RutaRepository
+};
+
+pub use user_repo::{
+    User,
+    UserRepository
 };

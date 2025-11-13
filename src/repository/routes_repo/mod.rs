@@ -22,7 +22,7 @@ impl RutaRepository {
     }
 
 
-        // Crear tabla de rutas
+    // Crear tabla de rutas
     pub async fn crear_tabla(&self) -> Result<(), sqlx::Error> {
         let query = r#"
         CREATE TABLE IF NOT EXISTS rutas (
@@ -43,11 +43,11 @@ impl RutaRepository {
     }
 
 
-        // Guardar una nueva ruta
+    // Guardar una nueva ruta
     pub async fn guardar_ruta(&self, ruta: &Ruta) -> Result<Ruta, sqlx::Error> {
         let query = r#"
-        INSERT INTO rutas (nombre, path, distancia, duracion)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO rutas (nombre, path, distancia)
+        VALUES ($1, $2, $3)
         RETURNING id, nombre, path , distancia, created_at, updated_at
         "#;
         
@@ -70,4 +70,29 @@ impl RutaRepository {
         Ok(ruta_guardada)
     }
 
+
+    // Obtener todas las rutas
+    pub async fn obtener_rutas(&self) -> Result<Vec<Ruta>, sqlx::Error> {
+        let query = r#"SELECT id, nombre, path, distancia, created_at, updated_at FROM rutas"#;
+        
+        let rows = sqlx::query(query)
+            .fetch_all(&self.pool)
+            .await?;
+            
+        let mut rutas = Vec::new();
+        
+        for row in rows {
+            let ruta = Ruta {
+                id: Some(row.get("id")),
+                nombre: row.get("nombre"),
+                path: row.get("path"),
+                distancia: row.get("distancia"),
+                created_at: row.get("created_at"),
+                updated_at: row.get("updated_at"),
+            };
+            rutas.push(ruta);
+        }
+        
+        Ok(rutas)
+    }
 }
