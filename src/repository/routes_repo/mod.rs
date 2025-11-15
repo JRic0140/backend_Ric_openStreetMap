@@ -1,16 +1,10 @@
-use serde::{Deserialize, Serialize};
-use chrono::Utc;
-use std::time::Duration;
+
+
+
 use sqlx::{SqlitePool, Row};
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Ruta {
-    pub id: Option<i32>,
-    pub nombre: String,
-    pub path: String,
-    pub distancia: f64,
-    pub created_at: chrono::DateTime<Utc>,
-    pub updated_at: chrono::DateTime<Utc>,
-}
+
+use crate::model::Ruta;
+
 #[derive(Debug)]
 pub struct RutaRepository {
     pool: SqlitePool,
@@ -20,7 +14,6 @@ impl RutaRepository {
     pub fn new(pool: SqlitePool) -> Self {
         Self { pool }
     }
-
 
     // Crear tabla de rutas
     pub async fn crear_tabla(&self) -> Result<(), sqlx::Error> {
@@ -42,7 +35,6 @@ impl RutaRepository {
         Ok(())
     }
 
-
     // Guardar una nueva ruta
     pub async fn guardar_ruta(&self, ruta: &Ruta) -> Result<Ruta, sqlx::Error> {
         let query = r#"
@@ -50,7 +42,6 @@ impl RutaRepository {
         VALUES ($1, $2, $3)
         RETURNING id, nombre, path , distancia, created_at, updated_at
         "#;
-        
         let row = sqlx::query(query)
             .bind(&ruta.nombre)
             .bind(&ruta.path)
@@ -69,8 +60,7 @@ impl RutaRepository {
         
         Ok(ruta_guardada)
     }
-
-
+    
     // Obtener todas las rutas
     pub async fn obtener_rutas(&self) -> Result<Vec<Ruta>, sqlx::Error> {
         let query = r#"SELECT id, nombre, path, distancia, created_at, updated_at FROM rutas"#;

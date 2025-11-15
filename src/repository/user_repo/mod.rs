@@ -1,19 +1,5 @@
-use serde::{Deserialize, Serialize};
-use chrono::Utc;
-use std::time::Duration;
 use sqlx::{SqlitePool, Row};
 
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct User {
-    pub id: Option<i32>,
-    pub user: String,
-    pub password: String,
-    pub token: String,
-
-    pub created_at: chrono::DateTime<Utc>,
-    pub updated_at: chrono::DateTime<Utc>,
-}
 #[derive(Debug)]
 pub struct UserRepository {
     pool: SqlitePool,
@@ -22,6 +8,25 @@ pub struct UserRepository {
 impl UserRepository {
     pub fn new(pool: SqlitePool) -> Self {
         Self { pool }
+    }
+
+    pub async fn crear_tabla(&self) -> Result<(), sqlx::Error> {
+        let query = r#"
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user TEXT NOT NULL,
+            password TEXT NOT NULL,
+            token TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+        "#;
+        
+        sqlx::query(query)
+            .execute(&self.pool)
+            .await?;
+            
+        Ok(())
     }
 
 }

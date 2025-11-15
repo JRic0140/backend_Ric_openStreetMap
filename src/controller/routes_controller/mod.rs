@@ -1,4 +1,6 @@
+use std::collections::HashMap;
 use std::fmt::Error;
+use std::sync::Arc;
 
 use axum::extract::Path;
 use axum::response::IntoResponse;
@@ -17,7 +19,10 @@ use axum::{
 };
 
 use serde::{Deserialize, Serialize};
+use sqlx::{Pool, Sqlite, SqlitePool};
+use tokio::sync::Mutex;
 
+use crate::repository::{RutaRepository};
 // use sqlx::{PgPool, Row};
 // use uuid::Uuid;
 
@@ -53,72 +58,72 @@ pub async fn list_routes() ->  String {
 
     "Route List".to_string()
 }
-
-
-
-async fn get_route(Path(id): Path<String>) -> impl IntoResponse {
-    // Aquí iría la lógica para obtener una ruta específica por ID
-    // Por ejemplo, consultar una base de datos
+#[derive(Debug)]
+pub struct RoutesController {
     
-    // Ejemplo básico de respuesta
-    match find_route_by_id(&id).await {
-        Ok(route) => {
-            // Devolver la ruta encontrada
-            Json(route).into_response()
-        }
-        Err(_) => {
-            // Manejar el caso donde no se encuentra la ruta
-            (StatusCode::NOT_FOUND, "Route not found").into_response()
-        }
+}
+
+impl RoutesController {
+    pub fn new() -> Self {
+        Self { }
     }
-}
 
-async fn find_route_by_id(id: &str) -> Result<Route, Error> {
-    // Aquí iría la lógica para buscar en la base de datos
-    // Por ejemplo:
-    // let route = database.find_route_by_id(id).await?;
-    // Ok(route)
+    pub fn routes(&self){
+
+    }
+
     
-    // Ejemplo de retorno simulado
-    todo!("Implementar búsqueda por ID")
+    pub async fn create_route(&self
+    ) ->  String {
+
+        "create Route".to_string()
+    }
+
+    pub async fn update_route(&self
+    ) -> String{
+
+
+        "Update route".to_string()
+    }
+
+    pub async fn delete_route(&self
+    ) -> String {
+        "Delete route".to_string()
+    }
+
+
+    async fn find_route_by_id(&self,id: &str) -> Result<Route, Error> {
+        // Aquí iría la lógica para buscar en la base de datos
+        // Por ejemplo:
+        // let route = database.find_route_by_id(id).await?;
+        // Ok(route)
+        
+        // Ejemplo de retorno simulado
+        todo!("Implementar búsqueda por ID")
+    }
+
+
 }
 
+pub fn config_routes(pool :Pool<Sqlite>) -> Router{
+    // Crear repositorio
+    let rutarepo = RutaRepository::new(pool);
 
+    let routes_controller = RoutesController::new();
 
-
-
-
-pub async fn create_route(
-) ->  String {
-
-    "create Route".to_string()
-}
-
-pub async fn update_route(
-) -> String{
-
-
-    "Update route".to_string()
-}
-
-pub async fn delete_route(
-) -> String {
-    "Delete route".to_string()
-}
-
-
-pub fn config_routes() -> Router{
-
+    // Crear tabla si no existe
+    let _ = rutarepo.crear_tabla();
     // add routes to axum router
+    print!("repo creada");
     Router::new()
         //implement middleware
-        .route("/routes", get(|| async { "Hello, World!" } ))
-        .route(
-            "/routes/:id",
-            get(get_route)
-                .put(update_route)
-                .delete(delete_route) .layer(middleware::from_fn(logging_middleware)),
-        )
+        .route("/routes", get(routes_controller.routes() ))
+        // .route(
+        //     "/routes/:id",
+        //     get()
+        //         .put(r)
+        //         .delete(delete_route) .layer(middleware::from_fn(logging_middleware)),
+        // )
 }
 
 
