@@ -1,6 +1,3 @@
-
-
-
 use sqlx::{SqlitePool, Row};
 
 use crate::model::Ruta;

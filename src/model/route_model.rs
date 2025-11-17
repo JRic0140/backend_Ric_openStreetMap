@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 use chrono::Utc;
-use std::time::Duration;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Ruta {
