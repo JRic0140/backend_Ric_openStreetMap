@@ -63,6 +63,25 @@ impl UserRepository{
 
             )
         }
+    pub async fn get_user_by_name(&self, user: String)-> Result<User, sqlx::Error>{
+        let query = r#"
+            SELECT * FROM users WHERE user = $1
+            "#;
+        let row = sqlx::query(query)
+        .bind(user)
+        .fetch_one(&self.pool)
+        .await?;
+        Ok(
+            User{
+                 id: Some(row.get("id")),
+                user: row.get("user"),
+                password: row.get("password"),
+                token:"".to_owned(),
+                created_at: row.get("created_at"),
+                updated_at: row.get("updated_at")
+            }
+        )
 
+    }
 }
 

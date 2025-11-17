@@ -7,7 +7,7 @@ use crate::model::Claims;
 pub fn GenerateJwt() -> String {
 
     dotenv::dotenv().ok(); // Carga el archivo .env
-    let api_key = env::var("API_KEY").expect("API_KEY no está definida");
+    let api_key = env::var("JWT_SECRET").expect("API_KEY no está definida");
     println!("La clave de la API es: {}", api_key);
     let my_claims = Claims {
         sub: api_key.to_owned(),

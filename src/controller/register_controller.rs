@@ -20,8 +20,6 @@ impl RegisterController{
 
     pub async fn register_handler(&self,f:LoginForm) -> Html<String>{
 
-        // println!("{:?}",&f);
-
         let password_hash = self.generate_argon(&f.password);
 
         let result = self.user_repo.guardar_ruta(f.username.clone(), password_hash.clone()).await;

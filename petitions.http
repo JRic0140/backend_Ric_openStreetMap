@@ -2,7 +2,16 @@
 POST http://localhost:3300/register
 Content-Type: application/x-www-form-urlencoded
 
-&username=foo
-&password=bar
+&username=Ric014
+&password=Ric014014.
+
+###
+
+###
+POST http://localhost:3300/login
+Content-Type: application/x-www-form-urlencoded
+
+&username=Ric014
+&password=Ric014014.
 
 ###

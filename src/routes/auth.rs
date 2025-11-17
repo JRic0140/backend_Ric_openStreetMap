@@ -9,10 +9,12 @@ use std::{collections::HashMap, sync::Arc};
 
 #[derive(Debug, Clone)]
 pub struct AppState {
-    sessions: Arc<Mutex<HashMap<String, User>>>,
+    pub sessions: Arc<Mutex<HashMap<String, User>>>,
+    pub auth_controller :AuthController
 }
 pub struct AuthRoute{
-        user_repo: Arc<UserRepository> ,
+        pub user_repo: Arc<UserRepository> 
+
 }
 impl AuthRoute{
 
@@ -23,9 +25,10 @@ impl AuthRoute{
 
 
     pub async fn routes (&self)->Router{
-
         let app_state = AppState {
             sessions: Arc::new(Mutex::new(HashMap::new())),
+            auth_controller: AuthController::new(self.user_repo.clone())
+
         };
         println!("LoginRoute working");
 
@@ -39,7 +42,6 @@ impl AuthRoute{
                 f: Form<LoginForm>| 
                 AuthController::login_handle(s,f)))
             
-            // .route("/register", post(LoginController::register_handle))
             .with_state(app_state)
     }
 
