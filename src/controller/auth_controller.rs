@@ -4,7 +4,7 @@ use serde::Deserialize;
 use crate::routes::auth::AppState;
 
 // Formulario de login
-#[derive(Deserialize)]
+#[derive(Deserialize,Debug)]
 pub struct LoginForm {
     username: String,
     password: String,

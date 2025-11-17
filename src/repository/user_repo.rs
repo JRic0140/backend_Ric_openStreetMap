@@ -2,16 +2,19 @@
 
 
 
+use std::sync::Arc;
+
 use sqlx::{SqlitePool};
 
 #[derive(Debug)]
-pub struct UserRepository<'a>{
-    pool: &'a SqlitePool,
+pub struct UserRepository{
+    pool: SqlitePool,
 }
 
-impl<'a> UserRepository<'a> {
-    pub fn new(pool: &'a SqlitePool) -> Self {
-        Self { pool }
+impl UserRepository{
+    pub fn new(pool:SqlitePool) -> Self {
+
+        Self {  pool }
     }
 
     pub async fn crear_tabla(&self)-> Result<(), sqlx::Error>{
@@ -30,7 +33,7 @@ impl<'a> UserRepository<'a> {
         "#;
             
          sqlx::query(query)
-            .execute(self.pool)
+            .execute(&self.pool)
             .await?;
         println!("UserRepository running");
 

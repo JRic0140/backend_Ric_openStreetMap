@@ -11,12 +11,12 @@ use std::{collections::HashMap, sync::Arc};
 pub struct AppState {
     sessions: Arc<Mutex<HashMap<String, User>>>,
 }
-pub struct AuthRoute<'s>{
-        user_repo:&'s UserRepository<'s>,
+pub struct AuthRoute{
+        user_repo: Arc<UserRepository> ,
 }
-impl<'s> AuthRoute<'s>{
+impl AuthRoute{
 
-    pub async fn new(user_repo:&'s UserRepository<'s>) -> Self{
+    pub async fn new(user_repo: Arc<UserRepository> )-> Self{
         _ = user_repo.crear_tabla().await;
         Self { user_repo }
     }

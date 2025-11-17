@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use sqlx::{SqlitePool, Row};
 
 use crate::model::Ruta;
