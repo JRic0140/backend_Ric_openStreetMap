@@ -1,10 +1,6 @@
+use sqlx::{SqlitePool, Row};
 
-
-
-
-use std::sync::Arc;
-
-use sqlx::{SqlitePool};
+use crate::model::User;
 
 #[derive(Debug)]
 pub struct UserRepository{
@@ -26,7 +22,7 @@ impl UserRepository{
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user TEXT NOT NULL,
             password TEXT NOT NULL,
-            token TEXT NOT NULL,
+            token TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )
@@ -41,5 +37,32 @@ impl UserRepository{
 
 
     }
+    pub async fn guardar_ruta(&self, user: String,password:String) -> Result<User, sqlx::Error> {
+            let query = r#"
+            INSERT INTO users (user, password)
+            VALUES ($1, $2)
+            RETURNING id, user, password, created_at, updated_at
+            "#;
+            let row = sqlx::query(query)
+            .bind(user)
+            .bind(password)
+            .fetch_one(&self.pool)
+            .await?;
+            
+            Ok(
+
+                User{
+                        id: Some(row.get("id")),
+                        user: row.get("user"),
+                        password: row.get("password"),
+                        token:"".to_owned(),
+                        created_at: row.get("created_at"),
+                        updated_at: row.get("updated_at")
+
+                        }
+
+            )
+        }
+
 }
 

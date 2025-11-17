@@ -1,7 +1,4 @@
-use std::sync::Arc;
-
 use sqlx::{SqlitePool, Row};
-
 use crate::model::Ruta;
 
 #[derive(Debug)]
@@ -47,6 +44,7 @@ impl RutaRepository {
             .bind(ruta.distancia)
             .fetch_one(&self.pool)
             .await?;
+        
         
         let ruta_guardada = Ruta {
             id: Some(row.get("id")),

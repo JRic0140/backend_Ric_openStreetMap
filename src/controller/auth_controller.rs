@@ -6,8 +6,8 @@ use crate::routes::auth::AppState;
 // Formulario de login
 #[derive(Deserialize,Debug)]
 pub struct LoginForm {
-    username: String,
-    password: String,
+    pub username: String,
+    pub password: String,
 }
 
 #[derive(Debug, Clone)]

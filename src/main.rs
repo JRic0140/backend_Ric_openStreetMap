@@ -6,7 +6,6 @@ mod sql_conf;
 mod util;
 use tokio::net::TcpListener;
 
-
 // run our app with hyper, listening globally on port 3000
 #[tokio::main]
 async fn main() {
