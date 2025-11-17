@@ -1,12 +1,11 @@
-
-use axum::routing::get;
-use axum::{Form, Router, extract::State, response::Html};
+use axum::routing::{ post};
+use axum::{Router};
 use tokio::sync::Mutex;
 use crate::model::User;
 use crate::repository::{ UserRepository};
-use crate::controller::{AuthController,LoginForm};
+use crate::controller::{AuthController, login_handle};
 use std::{collections::HashMap, sync::Arc};
-
+use tower_cookies::{ CookieManagerLayer};
 #[derive(Debug, Clone)]
 pub struct AppState {
     pub sessions: Arc<Mutex<HashMap<String, User>>>,
@@ -16,6 +15,8 @@ pub struct AuthRoute{
         pub user_repo: Arc<UserRepository> 
 
 }
+
+
 impl AuthRoute{
 
     pub async fn new(user_repo: Arc<UserRepository> )-> Self{
@@ -23,27 +24,19 @@ impl AuthRoute{
         Self { user_repo }
     }
 
-
     pub async fn routes (&self)->Router{
         let app_state = AppState {
             sessions: Arc::new(Mutex::new(HashMap::new())),
             auth_controller: AuthController::new(self.user_repo.clone())
-
+            
         };
         println!("LoginRoute working");
 
         // add routes to axum router
-        Router::new()
-            
-            .route("/login", get(
-                async || Html("login route")
-            )
-            .post(|s: State<AppState>,
-                f: Form<LoginForm>| 
-                AuthController::login_handle(s,f)))
-            
-            .with_state(app_state)
+    Router::new()
+    .route("/login", post(login_handle))
+    .with_state(app_state)
+    .layer(CookieManagerLayer::new())
     }
 
 }
-

@@ -1,2 +1,2 @@
 mod generate_jwt;
-pub use generate_jwt::{GenerateJwt,ValidateToken};
+pub use generate_jwt::{generate_jwt,validate_token};

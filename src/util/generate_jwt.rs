@@ -4,7 +4,7 @@ use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation, decode, encode}
 
 use crate::model::Claims;
 
-pub fn GenerateJwt() -> String {
+pub fn generate_jwt() -> String {
 
     dotenv::dotenv().ok(); // Carga el archivo .env
     let api_key = env::var("JWT_SECRET").expect("API_KEY no está definida");
@@ -23,7 +23,7 @@ pub fn GenerateJwt() -> String {
     token
 }
 
-pub fn ValidateToken(token: &str) {
+pub fn validate_token(token: &str) {
     let validacion = Validation::default();
 
     let datos = decode::<Claims>(

@@ -3,11 +3,13 @@ use std::sync::Arc;
 use axum::response::Result;
 use axum::{Form, extract::State, http::StatusCode, response::Html};
 use serde::Deserialize;
-use crate::model::User;
 use crate::repository::UserRepository;
 use crate::routes::auth::AppState;
-use crate::util::GenerateJwt;
-use argon2::{self, Config};
+use crate::util::generate_jwt;
+use axum_macros::debug_handler;
+use tower_cookies::{Cookies, Cookie};
+use argon2::{self};
+
 // Formulario de login
 #[derive(Deserialize,Debug)]
 pub struct LoginForm {
@@ -26,9 +28,17 @@ impl AuthController{
         // TODO
         Self{user_repository}
     }
-    // Método estático o función que pueda ser usada directamente
-    pub async fn login_handle(
+   
+    pub fn verificar_login(&self, password: &str, saved_hash: &str) -> bool {
+    argon2::verify_encoded(saved_hash, password.as_bytes()).unwrap_or(false)
+    }
+
+}
+ // Método estático o función que pueda ser usada directamente
+#[debug_handler]
+pub async fn login_handle(
         State(_state): State<AppState>,
+        cookies:Cookies,
         Form(form): Form<LoginForm>,
     ) -> Result<Html<String>, StatusCode> {
         let user = _state.auth_controller.user_repository.get_user_by_name(form.username.clone()).await;
@@ -41,20 +51,18 @@ impl AuthController{
 
         if login_verification {
 
-            let session_token = GenerateJwt();
-
+            let session_token = generate_jwt();
             // println!("session de token {:?} con usuario {:?} creada", &session_token, &user.user);
+            // Guardar cookie en el navegador
+            cookies.add( Cookie::new("session_token", session_token.clone()));
             let mut sessions = _state.sessions.lock().await;
             sessions.insert(session_token, user);
             println!("session {:?}",sessions.keys());
             return Ok(Html(format!(r#""200""#)));
-        }
-    
+
+
+        } else {
         Err(StatusCode::UNAUTHORIZED)
     }
-    pub fn verificar_login(&self, password: &str, saved_hash: &str) -> bool {
-    argon2::verify_encoded(saved_hash, password.as_bytes()).unwrap_or(false)
+    
     }
-
-}
-
