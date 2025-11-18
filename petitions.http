@@ -15,3 +15,12 @@ Content-Type: application/x-www-form-urlencoded
 &password=Ric014014.
 
 ###
+
+###
+GET http://localhost:3300/routes
+# Content-Type: application/x-www-form-urlencoded
+
+# &username=Ric014
+# &password=Ric014014.
+
+###

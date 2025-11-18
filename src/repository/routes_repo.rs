@@ -34,14 +34,13 @@ impl RutaRepository {
     // Guardar una nueva ruta
     pub async fn guardar_ruta(&self, ruta: &Ruta) -> Result<Ruta, sqlx::Error> {
         let query = r#"
-        INSERT INTO rutas (nombre, path, distancia)
-        VALUES ($1, $2, $3)
-        RETURNING id, nombre, path , distancia, created_at, updated_at
+        INSERT INTO rutas (nombre, path)
+        VALUES ($1, $2)
+        RETURNING id, nombre, path , created_at, updated_at
         "#;
         let row = sqlx::query(query)
             .bind(&ruta.nombre)
             .bind(&ruta.path)
-            .bind(ruta.distancia)
             .fetch_one(&self.pool)
             .await?;
         
@@ -50,7 +49,6 @@ impl RutaRepository {
             id: Some(row.get("id")),
             nombre: row.get("nombre"),
             path: row.get("path"),
-            distancia: row.get("distancia"),
             created_at: row.get("created_at"),
             updated_at: row.get("updated_at"),
         };
@@ -73,7 +71,6 @@ impl RutaRepository {
                 id: Some(row.get("id")),
                 nombre: row.get("nombre"),
                 path: row.get("path"),
-                distancia: row.get("distancia"),
                 created_at: row.get("created_at"),
                 updated_at: row.get("updated_at"),
             };

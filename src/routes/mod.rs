@@ -10,18 +10,24 @@ use crate::routes::auth::AuthRoute;
 use crate::sql_conf::{
     sql_con
 };
-
+/// ## Configuracion de las rutas
 pub async fn config_routes () -> Router{
-
+    
     let pool: sqlx::Pool<sqlx::Sqlite>= sql_con().await;
-    let user_repo = Arc::new(UserRepository::new(pool));
+    let user_repo = Arc::new(UserRepository::new(pool.clone()));
     let login_router = AuthRoute::new(user_repo.clone()).await;
     let register_router = RegisterRoute::new(user_repo.clone());
-    let routes_router = RoutesRoute::new();
+    let routes_router = RoutesRoute::new(pool.clone());
 
     Router::new()
+    // Ruta de autenticacion y logout
     .merge(login_router.routes().await)
+    // Ruta de registro de usuario 
+    // > argon2
     .merge(register_router.routes().await)
+    // # Ruta de gestion de rutas o recorridos
+    // ## middlewares para seguridad
+    // > jwt-token
     .merge(routes_router.routes().await)
     
 }

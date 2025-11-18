@@ -2,6 +2,8 @@ use std::env;
 
 use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation, decode, encode};
 
+use std::collections::HashMap;
+
 use crate::model::Claims;
 
 pub fn generate_jwt() -> String {
@@ -23,14 +25,28 @@ pub fn generate_jwt() -> String {
     token
 }
 
-pub fn validate_token(token: &str) {
+pub fn validate_token(token: &str) -> jsonwebtoken::TokenData<Claims>{
     let validacion = Validation::default();
 
-    let datos = decode::<Claims>(
+    let datos: jsonwebtoken::TokenData<Claims> = decode::<Claims>(
         token,
         &DecodingKey::from_secret("clave_secreta".as_ref()),
         &validacion,
     ).unwrap();
 
     println!("Claims: {:?}", datos.claims);
+    return datos
+}
+
+pub fn parse_cookies(cookie_string: &str) -> HashMap<String, String> {
+    let mut cookies = HashMap::new();
+    
+    // Dividir por punto y coma para separar las cookies
+    for cookie in cookie_string.split("; ") {
+        if let Some((key, value)) = cookie.split_once('=') {
+            cookies.insert(key.to_string(), value.to_string());
+        }
+    }
+    
+    cookies
 }

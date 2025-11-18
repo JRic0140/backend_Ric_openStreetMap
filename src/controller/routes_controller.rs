@@ -1,4 +1,5 @@
 use std::fmt::Error;
+use std::sync::Arc;
 use axum::{
     http::StatusCode,
     Router, routing::get,
@@ -20,14 +21,14 @@ use crate::repository::{RutaRepository};
 
 
 
-struct RoutesController{
-
+pub struct RoutesController{
+    routes_repo:RutaRepository
 }
 impl RoutesController{
-    pub fn new() -> Self{
+    pub fn new(routes_repo:RutaRepository) -> Self{
 
         Self{
-            
+            routes_repo
         }
 
     }
