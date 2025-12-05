@@ -41,9 +41,9 @@ pub async fn login_handle(
         cookies:Cookies,
         Form(form): Form<LoginForm>,
     ) -> Result<Html<String>, StatusCode> {
-        let user = _state.auth_controller.user_repository.get_user_by_name(form.username.clone()).await;
-        let user = user.unwrap();
-        let login_verification = _state.auth_controller.verificar_login(&form.password, &user.password);
+        let user: std::result::Result<crate::model::User, sqlx::Error> = _state.auth_controller.user_repository.get_user_by_name(form.username.clone()).await;
+        let user: crate::model::User = user.unwrap();
+        let login_verification: bool = _state.auth_controller.verificar_login(&form.password, &user.password);
 
         // println!("login_handle  {:?}",&form.username);
         // println!("get_user_by_name  {:?}",&user);
@@ -55,7 +55,7 @@ pub async fn login_handle(
             // println!("session de token {:?} con usuario {:?} creada", &session_token, &user.user);
             // Guardar cookie en el navegador
             cookies.add( Cookie::new("session_token", session_token.clone()));
-            let mut sessions = _state.sessions.lock().await;
+            let mut sessions: tokio::sync::MutexGuard<'_, std::collections::HashMap<String, crate::model::User>> = _state.sessions.lock().await;
             sessions.insert(session_token, user);
             println!("session {:?}",sessions.keys());
             return Ok(Html(format!(r#""200""#)));

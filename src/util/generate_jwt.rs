@@ -42,9 +42,10 @@ pub fn parse_cookies(cookie_string: &str) -> HashMap<String, String> {
     let mut cookies = HashMap::new();
     
     // Dividir por punto y coma para separar las cookies
-    for cookie in cookie_string.split("; ") {
+    for cookie in cookie_string.split(";") {
         if let Some((key, value)) = cookie.split_once('=') {
             cookies.insert(key.to_string(), value.to_string());
+            
         }
     }
     

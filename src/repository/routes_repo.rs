@@ -32,15 +32,16 @@ impl RutaRepository {
     }
 
     // Guardar una nueva ruta
-    pub async fn guardar_ruta(&self, ruta: &Ruta) -> Result<Ruta, sqlx::Error> {
+    pub async fn guardar_ruta(&self,route_name:String, route_path:String) -> Result<Ruta, sqlx::Error> {
+        println!("guardar_ruta en repo");
         let query = r#"
         INSERT INTO rutas (nombre, path)
         VALUES ($1, $2)
         RETURNING id, nombre, path , created_at, updated_at
         "#;
         let row = sqlx::query(query)
-            .bind(&ruta.nombre)
-            .bind(&ruta.path)
+            .bind(route_name)
+            .bind(route_path)
             .fetch_one(&self.pool)
             .await?;
         
@@ -65,8 +66,11 @@ impl RutaRepository {
             .await?;
             
         let mut rutas = Vec::new();
+
         
+
         for row in rows {
+
             let ruta = Ruta {
                 id: Some(row.get("id")),
                 nombre: row.get("nombre"),
@@ -74,7 +78,9 @@ impl RutaRepository {
                 created_at: row.get("created_at"),
                 updated_at: row.get("updated_at"),
             };
+
             rutas.push(ruta);
+
         }
         
         Ok(rutas)

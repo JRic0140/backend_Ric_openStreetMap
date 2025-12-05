@@ -2,7 +2,7 @@
 POST http://localhost:3300/register
 Content-Type: application/x-www-form-urlencoded
 
-&username=Ric014
+&username=Ric0140
 &password=Ric014014.
 
 ###
@@ -22,5 +22,18 @@ GET http://localhost:3300/routes
 
 # &username=Ric014
 # &password=Ric014014.
+
+###
+
+
+###
+POST http://localhost:3300/routes
+Content-Type: application/json
+
+{
+  "name": "testuser",
+  "path": "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[-3.7037901878356934,40.416775439208984],[-3.7037901878356934,40.417775439208984],[-3.7037901878356934,40.418775439208984]]},\"properties\":{}}]}"
+  
+}
 
 ###

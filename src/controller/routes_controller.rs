@@ -1,24 +1,5 @@
-use std::fmt::Error;
-use std::sync::Arc;
-use axum::{
-    http::StatusCode,
-    Router, routing::get,
-};
 
-use axum::body::Body;
-use axum::{
-    http::{Request},
-    response::Response,
-    middleware
-};
-
-use serde::{Deserialize, Serialize};
-use sqlx::{Pool, Sqlite};
-
-use crate::repository::{RutaRepository};
-
-
-
+use crate::{model::{RouteRequestModel, Ruta}, repository::RutaRepository};
 
 
 pub struct RoutesController{
@@ -29,10 +10,26 @@ impl RoutesController{
 
         Self{
             routes_repo
-        }
+        }}
 
+    pub async fn add_route(&self,route: RouteRequestModel) -> Result<(), sqlx::Error> {
+
+        self.routes_repo.guardar_ruta(route.name,route.path).await?;
+
+        Ok(())
     }
+    pub async fn get_routes(&self) -> Result<Vec<Ruta>, sqlx::Error> {
+
+        let routes = self.routes_repo.obtener_rutas().await?;
+
+        Ok(routes)
+    }
+    
+
+
 }
+
+
 
 
 

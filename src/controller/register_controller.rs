@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use argon2::Config;
 use axum::response::Html;
-use rand::{Rng, thread_rng};
+use rand::{Rng, rng};
 use crate::controller::LoginForm;
 use crate::repository::UserRepository;
 
@@ -28,9 +28,10 @@ impl RegisterController{
         Html(format!("success"))
 
     }
-    
+    // definir función para hashear la contraseña usando Argon2
     fn generate_argon(&self, password:&str)->String{
-            let salt: [u8; 16] = thread_rng().random(); // salt de 16 bytes
+
+            let salt: [u8; 16] = rng().random(); // salt de 16 bytes
             let config = Config::default();
 
             // hash_encoded devuelve un String, lo retornamos directamente

@@ -13,9 +13,7 @@ pub struct AppState {
 }
 pub struct AuthRoute{
         pub user_repo: Arc<UserRepository> 
-
 }
-
 
 impl AuthRoute{
 
